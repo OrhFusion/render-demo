@@ -1,0 +1,462 @@
+<html>
+    <head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Diabetes Risk Assessment - AI-Powered Health Insights</title><link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"><script src="https://cdn.jsdelivr.net/npm/chart.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script><style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        font-family: 'Roboto', sans-serif;
+        background: #f0f4f8;
+        height: 100%;
+        overflow-x: hidden;
+    }
+    html {
+        scroll-behavior: smooth;
+    }
+    .parallax-container {
+        perspective: 1px;
+        height: 100vh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+    .parallax-layer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .parallax-layer-back {
+        transform: translateZ(-1px) scale(2);
+    }
+    .parallax-layer-base {
+        transform: translateZ(0);
+    }
+    .hero {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        background: linear-gradient(135deg, #3498db, #8e44ad), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill="none" width="100" height="100"/><path d="M50 30V70M30 50H70" stroke="rgba(255,255,255,0.1)" stroke-width="8"/></svg>');
+        background-size: cover, 100px 100px;
+        overflow: hidden;
+    }
+    .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+    }
+    .hero p {
+        font-size: 1.5rem;
+    }
+    .hero-nav {
+        margin-top: 2rem;
+    }
+    .hero-nav a {
+        color: #fff;
+        text-decoration: none;
+        margin: 0 1rem;
+        padding: 0.5rem 1rem;
+        border: 2px solid #fff;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+    .hero-nav a:hover {
+        background-color: #fff;
+        color: #3498db;
+    }
+    .content {
+        background: #fff;
+        padding: 4rem 2rem;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        position: relative;
+        z-index: 1;
+    }
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    h2 {
+        color: #3498db;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+    form {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        display: grid;
+        gap: 1.5rem;
+    }
+    label {
+        font-weight: bold;
+        color: #34495e;
+    }
+    input[type="number"], select {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #bdc3c7;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    input[type="number"]:focus, select:focus {
+        border-color: #3498db;
+        box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
+    }
+    input[type="submit"] {
+        background-color: #3498db;
+        color: white;
+        border: none;
+        padding: 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-weight: 700;
+        transition: all 0.3s;
+        text-transform: uppercase;
+    }
+    input[type="submit"]:hover {
+        background-color: #2980b9;
+    }
+    .result {
+        margin-top: 2rem;
+        text-align: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+    .button-cont {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center; /* Center the button horizontally */
+    align-items: center; /* Center the button vertically */
+}
+    .model-info {
+        margin-top: 3rem;
+        background: #ecf0f1;
+        padding: 2rem;
+        border-radius: 8px;
+    }
+    .model-info h3 {
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    .floating-shapes {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+    }
+    .shape {
+        position: absolute;
+        background: rgba(255,255,255,0.1);
+        animation: float 15s infinite;
+        opacity: 0.5;
+    }
+    @keyframes float {
+        0% { transform: translateY(0) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(180deg); }
+        100% { transform: translateY(0) rotate(360deg); }
+    }
+    .pulsating-heart {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 3rem;
+        color: #e74c3c;
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+    }
+    .medical-icon {
+        font-size: 2rem;
+        color: rgba(255, 255, 255, 0.7);
+        position: absolute;
+    }
+    .parallax-icon {
+        position: absolute;
+        opacity: 0.7;
+        transition: all 0.3s ease;
+    }
+    .parallax-icon:nth-child(1) { top: 10%; left: 10%; font-size: 3rem; }
+    .parallax-icon:nth-child(2) { top: 20%; right: 15%; font-size: 4rem; }
+    .parallax-icon:nth-child(3) { bottom: 15%; left: 20%; font-size: 3.5rem; }
+    .parallax-icon:nth-child(4) { bottom: 25%; right: 10%; font-size: 2.5rem; }
+    .footer {
+        background-color: #34495e;
+        color: #ecf0f1;
+        padding: 2rem 0;
+        text-align: center;
+    }
+    .emergency-contact {
+        font-size: 1.2rem;
+        margin-top: 1rem;
+    }
+</style></head><body>
+    <div class="parallax-container">
+        <div class="parallax-layer parallax-layer-back">
+            <div class="floating-shapes">
+                <div class="shape" style="width: 50px; height: 50px; left: 10%; top: 20%; animation-delay: 0s;"></div>
+                <div class="shape" style="width: 70px; height: 70px; left: 30%; top: 50%; animation-delay: 2s;"></div>
+                <div class="shape" style="width: 40px; height: 40px; left: 60%; top: 30%; animation-delay: 4s;"></div>
+                <div class="shape" style="width: 60px; height: 60px; left: 80%; top: 70%; animation-delay: 6s;"></div>
+                <div class="shape" style="width: 55px; height: 55px; left: 45%; top: 80%; animation-delay: 8s;"></div>
+            </div>
+            <i class="fas fa-syringe medical-icon" style="top: 25%; left: 15%;"></i>
+            <i class="fas fa-capsules medical-icon" style="top: 60%; right: 10%;"></i>
+            <i class="fas fa-user-md medical-icon" style="bottom: 20%; left: 25%;"></i>
+        </div>
+        
+        <div class="parallax-layer parallax-layer-base">
+            <section class="hero">
+                <div class="container">
+                    <h1>
+                        Welcome To Care & Cure Hospital
+                    </h1>
+                    <p>Harnessing Machine Learning for Predictive Health Insights</p>
+                   
+                    <nav class="hero-nav">
+                        <a href="#assessment">Assessment</a>
+                        <a href="#model-info">Model Info</a>
+                        <a href="#emergency">Emergency</a>
+                    </nav>
+                </div>
+                <i class="fas fa-heartbeat pulsating-heart"></i>
+                <i class="fas fa-stethoscope parallax-icon"></i>
+                <i class="fas fa-hospital parallax-icon"></i>
+                <i class="fas fa-pills parallax-icon"></i>
+            </section>
+            
+            <section class="content">
+                <div class="container">
+                    <h2 id="assessment">Diabetes Risk Assessment</h2>
+                    <form action="/predict" method="POST">
+                        <label for="age">Age: <br>
+                            Important factor as diabetes is more commonly diagnosed in older adults</label>
+                        <input type="number" id="age" name="age" required>
+
+                        <label for="gender">Gender: <br>
+                            Refers to the biological sex of the individual</label>
+                        <select id="gender" name="gender" required>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+
+                        <label for="hypertension">Hypertension: <br>
+                            Medical condition in which the blood pressure in the arteries is persistently elevated</label>
+                        <select id="hypertension" name="hypertension" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+
+                        <label for="heart_disease">Heart Disease: <br>
+                            Medical condition that is associated with an increased risk of developing diabetes.</label>
+                        <select id="heart_disease" name="heart_disease" required>
+                            <option value="0">No</option>
+                            <option value="1">Yes</option>
+                        </select>
+
+                        <label for="smoking_history">Smoking History: <br>
+                            Also considered a risk factor for diabetes</label>
+                        <select id="smoking_history" name="smoking_history" required>
+                            <option value="never">Never</option>
+                            <option value="former">Former</option>
+                            <option value="current">Current</option>
+                        </select>
+
+                        <label for="bmi">BMI: <br>
+                            (Body Mass Index) is a measure of body fat based on weight and height</label>
+                        <input type="number" id="bmi" name="bmi" step="0.1" required>
+
+                        <label for="HbA1c_level">HbA1c Level: <br> (Hemoglobin A1c) level is a measure of a person's average blood sugar level over the past 2-3 months</label>
+                        <input type="number" id="HbA1c_level" name="HbA1c_level" step="0.1" required>
+
+                        <label for="blood_glucose_level">Blood Glucose Level: <br>
+                            Level refers to the amount of glucose in the bloodstream at a given time</label>
+                        <input type="number" id="blood_glucose_level" name="blood_glucose_level" required>
+
+                        <input type="submit" value="Assess Risk">
+                    </form>
+                    {% if prediction_text %}
+                    <h3>{{ prediction_text }}</h3>
+                    {% endif %}
+
+                    
+
+                    <div class="button-cont">
+                        <a href="http://localhost:5000">
+                            <button>Predict Again</button>
+                          </a>
+                          
+                    </div>
+
+                    <div class="model-info" id="model-info">
+                        <h3>Understanding Our Machine Learning Model</h3>
+                        <p>Our diabetes risk assessment tool uses a sophisticated machine learning algorithm trained on complete health data. It uses a Random Forest algorithm that combines multiple decision trees to make accurate predictions based on various health parameters.</p>
+                        <p>The model takes into account key factors such as age, BMI, blood glucose levels and medical history to calculate your risk of developing diabetes. By analyzing patterns in these processes, our AI can provide insights that may not be readily apparent with traditional methods.</p>
+                        <p>Remember, while our model is not highly accurate, AI can make mistake, take professional medical advice. Always consult with your healthcare provider for a comprehensive evaluation.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <h3 id="emergency">Emergency Contact</h3>
+            <p class="emergency-contact">Call 911 for immediate medical assistance</p>
+            <p>Remember: This tool is for educational purposes only. Always consult with a healthcare professional for medical advice.</p>
+        </div>
+    </footer>
+
+    <script>
+    document.getElementById('predictionForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const prediction = Math.random() > 0.5 ? 'High risk of diabetes' : 'Low risk of diabetes';
+        const resultElement = document.getElementById('prediction_result');
+        resultElement.textContent = prediction;
+        resultElement.style.color = prediction.includes('High') ? '#e74c3c' : '#2ecc71';
+        
+        resultElement.style.opacity = 1;
+
+        // Chart.js
+        const ctx = document.getElementById('healthChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Age', 'BMI', 'Blood Glucose', 'HbA1c', 'Hypertension', 'Heart Disease'],
+                datasets: [{
+                    label: 'Your Health Profile',
+                    data: [
+                        document.getElementById('age').value,
+                        document.getElementById('bmi').value,
+                        document.getElementById('blood_glucose_level').value,
+                        document.getElementById('HbA1c_level').value,
+                        document.getElementById('hypertension').value * 100,
+                        document.getElementById('heart_disease').value * 100
+                    ],
+                    fill: true,
+                    backgroundColor: 'rgba(52, 152, 219, 0.2)',
+                    borderColor: 'rgb(52, 152, 219)',
+                    pointBackgroundColor: 'rgb(52, 152, 219)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgb(52, 152, 219)'
+                }]
+            },
+            options: {
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            display: false
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    });
+
+    // Smooth scroll function
+    function smoothScroll(target, duration) {
+        var target = document.querySelector(target);
+        var targetPosition = target.getBoundingClientRect().top;
+        var startPosition = window.pageYOffset;
+        var distance = targetPosition - startPosition;
+        var startTime = null;
+
+        function animation(currentTime) {
+            if (startTime === null) startTime = currentTime;
+            var timeElapsed = currentTime - startTime;
+            var run = ease(timeElapsed, startPosition, distance, duration);
+            window.scrollTo(0, run);
+            if (timeElapsed < duration) requestAnimationFrame(animation);
+        }
+
+        function ease(t, b, c, d) {
+            t /= d / 2;
+            if (t < 1) return c / 2 * t * t + b;
+            t--;
+            return -c / 2 * (t * (t - 2) - 1) + b;
+        }
+
+        requestAnimationFrame(animation);
+    }
+
+    // Add smooth scroll to all links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            smoothScroll(this.getAttribute('href'), 1000);
+        });
+    });
+
+    // GSAP animation for floating shapes
+    gsap.to(".shape", {
+        y: "random(-20, 20)",
+        rotation: "random(-180, 180)",
+        duration: 3,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.2
+    });
+
+    // Animate medical icons
+    gsap.to(".medical-icon", {
+        y: "random(-30, 30)",
+        x: "random(-30, 30)",
+        rotation: "random(-45, 45)",
+        duration: 4,
+        repeat: -1,
+        yoyo: true,
+        ease: "sine.inOut",
+        stagger: 0.5
+    });
+
+    // Update the existing mousemove event listener
+    document.addEventListener('mousemove', (e) => {
+        const icons = document.querySelectorAll('.parallax-icon');
+        const mouseX = e.clientX / window.innerWidth;
+        const mouseY = e.clientY / window.innerHeight;
+        
+        icons.forEach((icon, index) => {
+            const speed = (index + 1) * 0.05;
+            const x = (window.innerWidth - e.pageX * speed) / 100;
+            const y = (window.innerHeight - e.pageY * speed) / 100;
+            
+            icon.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+    });
+
+    // Add scroll-based parallax effect
+    window.addEventListener('scroll', () => {
+        const scrollY = window.scrollY;
+        const parallaxBack = document.querySelector('.parallax-layer-back');
+        parallaxBack.style.transform = `translateY(${scrollY * 0.5}px) translateZ(-1px) scale(2)`;
+    });
+    </script>
+</body></html>
